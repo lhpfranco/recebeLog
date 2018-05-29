@@ -18,7 +18,7 @@ public class ListarLogAplicacaoController{
 	public List<StackTrace> lista;
 	
 
-    @RequestMapping(value="/listarLogAplicacao", produces = "text/plain;charset=UTF-8")
+    @RequestMapping(value="/listarLogAplicacao", produces = "application/json;charset=UTF-8")
     public List<StackTrace> stack() {
     	
     	try {
