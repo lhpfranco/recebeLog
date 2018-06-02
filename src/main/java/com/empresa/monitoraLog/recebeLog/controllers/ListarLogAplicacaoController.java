@@ -32,7 +32,6 @@ public class ListarLogAplicacaoController{
     		e.printStackTrace();
     	}
         
-        
         return lista;
     }
     
