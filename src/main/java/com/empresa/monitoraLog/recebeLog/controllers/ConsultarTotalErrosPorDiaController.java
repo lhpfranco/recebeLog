@@ -12,23 +12,24 @@ import com.empresa.monitoraLog.recebeLog.domain.TotalErrosPeriodo;
 import com.empresa.monitoraLog.recebeLog.repository.StackTraceRepository;
 
 @RestController
-public class ConsultarTotalErrosPeriodoController {
+public class ConsultarTotalErrosPorDiaController {
 
 	@Autowired
 	private StackTraceRepository repository;
 	public List<TotalErrosPeriodo> lista;
 
 	// Exemplo de endereço:
-	// http://localhost:8080/consultarTotalErrosPeriodo?startDate=2017-11-29&endDate=2017-11-30
+	// http://localhost:8080/consultarTotalErrosPeriodo?appName=AP000100&startDate=2017-11-29&endDate=2017-11-30
 
-	@RequestMapping(value = "/consultarTotalErrosPeriodo", produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/consultarTotalErrosPorDia", produces = "application/json;charset=UTF-8")
 	public List<TotalErrosPeriodo> stack(
+			@PathParam(value = "appName") String appName,
 			@PathParam(value = "startDate") String startDate,
 			@PathParam(value = "endDate") String endDate) {
 
 		try {
-			this.lista = repository.findTotalErrosPeriodo(java.sql.Date.valueOf(startDate), java.sql.Date.valueOf(endDate));
-
+			this.lista = repository.findTotalErrosPorDia(appName, java.sql.Date.valueOf(startDate), java.sql.Date.valueOf(endDate));
+			
 			if (!lista.isEmpty())
 				System.out.println("tamanho lista: " + lista.size());
 

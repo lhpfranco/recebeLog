@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.empresa.monitoraLog.recebeLog.domain.ClassesRecorrentesPeriodo;
 import com.empresa.monitoraLog.recebeLog.domain.ErrosRecorrentesPeriodo;
 import com.empresa.monitoraLog.recebeLog.domain.StackTrace;
 import com.empresa.monitoraLog.recebeLog.domain.TotalErrosPeriodo;
@@ -17,28 +18,56 @@ public interface StackTraceRepository extends JpaRepository<StackTrace, Long>{
 	
 	List<StackTrace> findByApplicationName(@Param("name")String appReference);
 	
-	@Query("select u from StackTrace u where date between :startDate and :endDate")
-	List<StackTrace> findByDate(@Param("startDate") Date startDate,
-								@Param("endDate") Date endDate);
+	@Query("select s from StackTrace s where s.applicationName = :appName and s.date between :startDate and :endDate")
+	List<StackTrace> findByDate(
+			@Param("appName") String appName,
+			@Param("startDate") Date startDate,
+			@Param("endDate") Date endDate);
+	
+	
+	@Query("select count(s) from StackTrace s where date between :startDate and :endDate and s.applicationName = :appName")
+	Long findTotalErrosPorPeriodo(
+			@Param("appName") String appName,
+			@Param("startDate") Date startDate,
+			@Param("endDate") Date endDate);
+	
 	
 	
 	
 	@Query("select new com.empresa.monitoraLog.recebeLog.domain.TotalErrosPeriodo(s.date, count(s)) " +
 		       "from StackTrace s " +
 		       "where date between :startDate and :endDate " +
-		       "group by year(s.date), month(s.date), day(s.date) order by s.date")
-	List<TotalErrosPeriodo> findTotalErrosPeriodo(@Param("startDate") Date startDate,
-												  @Param("endDate") Date endDate);
+		       "and s.applicationName = :appName "+
+		       "group by year(s.date), month(s.date), day(s.date) order by s.date desc")
+	List<TotalErrosPeriodo> findTotalErrosPorDia(
+			@Param("appName") String appName,
+			@Param("startDate") Date startDate,
+			@Param("endDate") Date endDate);
 	
-	//select tipo_excecao, count(tipo_excecao) from tb_log_aplicacao 
-	//WHERE data between '2017-11-28' and '2017-11-30' 
-	//GROUP BY year(data), month(data), day(data)  order by tipo_excecao LIMIT 2;
+	
+	
+	
 	@Query("select new com.empresa.monitoraLog.recebeLog.domain.ErrosRecorrentesPeriodo(s.exceptionType, count(s)) " +
 		       "from StackTrace s " +
 		       "where date between :startDate and :endDate " +
-		       "group by year(s.date), month(s.date), day(s.date) order by s.date ")
-//		       "limit 2")
-	List<ErrosRecorrentesPeriodo> findErrosMaisRecorrentesPeriodo(@Param("startDate") Date startDate,
-												  @Param("endDate") Date endDate);
+		       "and s.applicationName = :appName "+
+		       "group by s.exceptionType order by count(s) desc")
+	List<ErrosRecorrentesPeriodo> findErrosMaisRecorrentesPeriodo(
+			@Param("appName") String appName,
+			@Param("startDate") Date startDate,
+			@Param("endDate") Date endDate);
+	
+	
+	
+	@Query("select new com.empresa.monitoraLog.recebeLog.domain.ClassesRecorrentesPeriodo(s.exceptionClass, count(s)) " +
+		       "from StackTrace s " +
+		       "where date between :startDate and :endDate " +
+		       "and s.applicationName = :appName "+
+		       "group by s.exceptionClass order by count(s) desc")
+	List<ClassesRecorrentesPeriodo> findClassesMaisRecorrentesPeriodo(
+			@Param("appName") String appName,
+			@Param("startDate") Date startDate,
+			@Param("endDate") Date endDate);
+	
 
 }
