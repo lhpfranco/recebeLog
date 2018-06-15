@@ -3,6 +3,7 @@ package com.empresa.monitoraLog.recebeLog.repository;
 import java.sql.Date;
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -55,7 +56,8 @@ public interface StackTraceRepository extends JpaRepository<StackTrace, Long>{
 	List<ErrosRecorrentesPeriodo> findErrosMaisRecorrentesPeriodo(
 			@Param("appName") String appName,
 			@Param("startDate") Date startDate,
-			@Param("endDate") Date endDate);
+			@Param("endDate") Date endDate,
+			Pageable pageable);
 	
 	
 	
@@ -67,7 +69,8 @@ public interface StackTraceRepository extends JpaRepository<StackTrace, Long>{
 	List<ClassesRecorrentesPeriodo> findClassesMaisRecorrentesPeriodo(
 			@Param("appName") String appName,
 			@Param("startDate") Date startDate,
-			@Param("endDate") Date endDate);
+			@Param("endDate") Date endDate,
+			Pageable pageable);
 	
 
 }
