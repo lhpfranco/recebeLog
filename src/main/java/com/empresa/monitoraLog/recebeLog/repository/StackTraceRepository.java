@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.empresa.monitoraLog.recebeLog.domain.ClassesRecorrentesPeriodo;
 import com.empresa.monitoraLog.recebeLog.domain.ErrosRecorrentesPeriodo;
 import com.empresa.monitoraLog.recebeLog.domain.StackTrace;
 import com.empresa.monitoraLog.recebeLog.domain.TotalErrosPeriodo;
@@ -61,12 +60,12 @@ public interface StackTraceRepository extends JpaRepository<StackTrace, Long>{
 	
 	
 	
-	@Query("select new com.empresa.monitoraLog.recebeLog.domain.ClassesRecorrentesPeriodo(s.exceptionClass, count(s)) " +
+	@Query("select s.exceptionClass as exceptionClass, count(s.exceptionClass) as total " +
 		       "from StackTrace s " +
 		       "where date between :startDate and :endDate " +
 		       "and s.applicationName = :appName "+
-		       "group by s.exceptionClass order by count(s) desc")
-	List<ClassesRecorrentesPeriodo> findClassesMaisRecorrentesPeriodo(
+		       "group by s.exceptionClass order by count(s.exceptionClass) desc")
+	List<StackTrace> findClassesMaisRecorrentesPeriodo(
 			@Param("appName") String appName,
 			@Param("startDate") Date startDate,
 			@Param("endDate") Date endDate,
